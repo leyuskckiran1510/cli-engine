@@ -1,6 +1,6 @@
 # cli-engine
 CLI based game engine, Command Line game engine for 2d (3d may be.) games in terminal.
-It uses the (chafa)[https://github.com/hpjansson/chafa] style terminal painting or drawing to draw pictures in terminal
+It uses the [chafa](https://github.com/hpjansson/chafa) style terminal painting or drawing to draw pictures in terminal
 
 # Get Started
 
