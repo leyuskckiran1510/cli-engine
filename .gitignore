@@ -1,3 +1,6 @@
+#binary file
+cli-engine
+
 # Prerequisites
 *.d
 
@@ -6,6 +9,7 @@
 *.ko
 *.obj
 *.elf
+*.out
 
 # Linker output
 *.ilk

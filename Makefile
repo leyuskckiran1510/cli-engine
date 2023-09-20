@@ -1,33 +1,38 @@
 # Makefile for Your Project
-
 # Compiler
 CC = gcc
 
 # Compiler flags
-CFLAGS = -ggdb
+CFLAGS = -ggdb -Wall -Wextra -O3
 
 # Libraries
-LIBS = -lm `pkg-config --cflags --libs glib-2.0`
+LIBS =
 
 # Source files
-SRC = src/main.c
+SRC_FILES = $(wildcard src/*.c src/*/*.c)
+OBJ_FILES = $(SRC_FILES:.c=.o)
 
 # Output executable name
-OUTPUT = cli-engine
+EXECUTABLE = cli-engine
 
-all: compile
+all: $(EXECUTABLE)
 
-compile: $(SRC)
-	$(CC) -o $(OUTPUT) $^ $(CFLAGS) $(LIBS)
+# Rule to compile C source files into object files
+%.o: %.c
+		$(CC) $(CFLAGS) -c $< -o $@
+
+$(EXECUTABLE): $(OBJ_FILES)
+		$(CC) $(CFLAGS) $(LIBS) $^ -o $@
+
 
 debug: compile
-	gdb ./$(OUTPUT)
+	gdb ./cli-engine
 
 clean:
-	rm -f $(OUTPUT)
+		rm -f $(OBJ_FILES) $(EXECUTABLE)
 
-run: compile
-	./$(OUTPUT)
+run: $(EXECUTABLE)
+	./cli-engine
 
 test:
 	echo -e "Done✅"

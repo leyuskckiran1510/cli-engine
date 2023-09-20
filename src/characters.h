@@ -7,17 +7,16 @@ This symbols are Copied from  ( Copyright (C) 2018-2022 Hans Petter Jansson)
 
 */
 
+#ifndef __PALLATE__
+#define __PALLATE__
 
-typedef struct CodeMap
-{
-    gint c;
-    gunichar u;
-}
-CodeMap;
+typedef struct{
+    int c;
+    unsigned int u;
+}CodeMap;
 
 
-static const CodeMap normal [] =
-{
+static const CodeMap normal_pallete [] ={
     /* 0-127 */
     { 0, '@' },
     { 1, 'A' },
@@ -178,7 +177,7 @@ static const CodeMap normal [] =
     { -1, 0 }
 };
 
-static const CodeMap ibm_codes [] =
+static const CodeMap ibm_pallete [] =
 {
     { 32, 0x0020 }, /* SPACE */
     { 33, 0x0021 }, /* EXCLAMATION MARK */
@@ -405,3 +404,4 @@ static const CodeMap ibm_codes [] =
 
     { -1, 0 }
 };
+#endif
