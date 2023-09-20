@@ -24,11 +24,11 @@ typedef struct {
 
 FBColor color_merge(Color c1, Color c2);
 
-static const Color RED = (Color){.r = 255, .g = 100, .b = 100};
-static const Color GREEN = (Color){ .r = 100,.g = 255, .b = 100};
-static const Color BLUE = (Color){ .r = 100, .g = 100,.b = 255};
-static const Color YELLOW = (Color){.r = 255, .g = 255, .b = 100};
-static const Color BLACK = (Color){.r = 0, .g = 0,.b = 0 };
+static const Color RED = {.r = 255, .g = 100, .b = 100};
+static const Color GREEN ={ .r = 100,.g = 255, .b = 100};
+static const Color BLUE = { .r = 100, .g = 100,.b = 255};
+static const Color YELLOW ={.r = 255, .g = 255, .b = 100};
+static const Color BLACK = {.r = 0, .g = 0,.b = 0 };
 
 
 #endif

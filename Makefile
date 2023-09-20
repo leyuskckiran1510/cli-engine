@@ -3,10 +3,11 @@
 CC = gcc
 
 # Compiler flags
-CFLAGS = -ggdb -Wall -Wextra -O3
+CFLAGS = -ggdb -Wall -Wextra -O3 -pedantic
+
 
 # Libraries
-LIBS =
+LIBS = -lm
 
 # Source files
 SRC_FILES = $(wildcard src/*.c src/*/*.c)
@@ -19,10 +20,10 @@ all: $(EXECUTABLE)
 
 # Rule to compile C source files into object files
 %.o: %.c
-		$(CC) $(CFLAGS) -c $< -o $@
+		$(CC) $(CFLAGS) -c $< -o $@ $(LIBS)
 
 $(EXECUTABLE): $(OBJ_FILES)
-		$(CC) $(CFLAGS) $(LIBS) $^ -o $@
+		$(CC) $(CFLAGS)  $^ -o $@ $(LIBS)
 
 
 debug: compile
@@ -33,6 +34,7 @@ clean:
 
 run: $(EXECUTABLE)
 	./cli-engine
+# 	rm -f $(OBJ_FILES) $(EXECUTABLE)
 
 test:
 	echo -e "Done✅"
