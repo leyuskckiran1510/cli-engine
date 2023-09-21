@@ -3,8 +3,6 @@
 #include "colors.h"
 
 #include "canvas.h"
-#include "unicode/decode.h"
-
 
 
 
@@ -14,6 +12,7 @@ void canvas_draw(Canvas *canvas) {
   */
   int padding = canvas->height%2;
   char utf8[4];
+  printf("\033[1;1H\033[?25l");
   for (int i = 0; i < canvas->height-padding; i += 2) {
     for (int j = 0; j < canvas->width; j++) {
       Color c1 = canvas->surface[(i + 1 * 0) * canvas->width + j];
@@ -23,20 +22,25 @@ void canvas_draw(Canvas *canvas) {
       printf("\033[38;2;%d;%d;%d;48;2;%d;%d;%dm%s", COLOR(c.fg), COLOR(c.bg),
              utf8);
     }
-    printf("%s\n", RESET_COLOR);
+  printf("%s\n", RESET_COLOR);
   }
+  printf("\033[1;1H\033[?25h");
 }
 
 
 void canvas_place(Canvas *canvas, int x, int y, Color color) {
-  if (x>=0 && x<canvas->width && y>=0 && y<canvas->height){
+  if (x>=0 && x<canvas->width &&y>=0 && y < canvas->height){
       canvas->surface[y * canvas->width + x] = color;
   }
+  //if(liner_fill)
+  // if (y * canvas->width + x>=0 && y * canvas->width + x < canvas->height*canvas->width){
+  //     canvas->surface[y * canvas->width + x] = color;
+  // }
 }
 void canvas_fill(Canvas *canvas, Color with) {
   for (int i = 0; i < canvas->height; i++)
     for (int j = 0; j < canvas->width; j++)
-      canvas->place(canvas,i,j,with);
+      canvas->surface[i * canvas->width + j] = with;
 }
 
 Canvas *canvas_init(int width, int height) {

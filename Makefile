@@ -3,14 +3,17 @@
 CC = gcc
 
 # Compiler flags
-CFLAGS = -ggdb -Wall -Wextra -O3 -pedantic
-
+CFLAGS = -ggdb -Wall -Wextra -O3 -pedantic -fsanitize=address
 
 # Libraries
 LIBS = -lm
 
+#filters
+FILTERS=test
+
 # Source files
-SRC_FILES = $(wildcard src/*.c src/*/*.c)
+SRC_FILES:=$(shell find src -type f -iname *.c | grep -v $(FILTERS))
+# SRC_FILES = $(wildcard src/[^(test)]*.c src/*/[^(test)]*.c)
 OBJ_FILES = $(SRC_FILES:.c=.o)
 
 # Output executable name

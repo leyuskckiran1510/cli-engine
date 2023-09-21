@@ -1,7 +1,9 @@
 #ifndef __SHAPES__
 #define __SHAPES__
 
-#include "./../canvas.h"
+#ifndef __CLI_ENGINE__
+  #include "./../cli-engine.h"
+#endif
 
 typedef enum {
   OUTLINE = 1,

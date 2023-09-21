@@ -1,4 +1,4 @@
-#include "./../canvas.h"
+
 #include "shapes.h"
 
 #define square(x) ((x)*(x))
