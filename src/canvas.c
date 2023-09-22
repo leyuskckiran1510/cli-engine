@@ -1,8 +1,7 @@
-#include <stdlib.h>
 #include <stdio.h>
-#include "colors.h"
 
 #include "canvas.h"
+#include "cli-engine.h"
 
 
 
@@ -11,18 +10,26 @@ void canvas_draw(Canvas *canvas) {
     For now making sure that we dont touch the unallocated memory when height is odd
   */
   int padding = canvas->height%2;
+   #ifndef _WIN32
   char utf8[4];
+  #endif
   printf("\033[1;1H\033[?25l");
+  // printf("\x1b[2J""\033[?25l");
   for (int i = 0; i < canvas->height-padding; i += 2) {
     for (int j = 0; j < canvas->width; j++) {
       Color c1 = canvas->surface[(i + 1 * 0) * canvas->width + j];
       Color c2 = canvas->surface[(i + 1 * 1) * canvas->width + j];
       FBColor c = color_merge(c1, c2);
+      #ifdef _WIN32
+      printf("\033[38;2;%d;%d;%d;48;2;%d;%d;%dm%s", COLOR(c.fg), COLOR(c.bg),
+             "O");
+      #else
       (void)unsigned_to_unicode(c.c.u, utf8);
       printf("\033[38;2;%d;%d;%d;48;2;%d;%d;%dm%s", COLOR(c.fg), COLOR(c.bg),
              utf8);
+      #endif
     }
-  printf("%s\n", RESET_COLOR);
+  printf("%s\n",RESET_COLOR);
   }
   printf("\033[1;1H\033[?25h");
 }

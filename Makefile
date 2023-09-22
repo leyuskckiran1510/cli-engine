@@ -3,21 +3,34 @@
 CC = gcc
 
 # Compiler flags
-CFLAGS = -ggdb -Wall -Wextra -O3 -pedantic -fsanitize=address
+ifeq ($(OS),Windows_NT)
+	CFLAGS = -ggdb -Wall -Wextra -O3 -pedantic 
+	EXECUTABLE = cli-engine.exe
+	LIBS = -lm -lWs2_32
+else
+	CFLAGS = -ggdb -Wall -Wextra -O3 -pedantic -fsanitize=address
+	EXECUTABLE = cli-engine
+	LIBS = -lm
+endif
+
 
 # Libraries
-LIBS = -lm
+
 
 #filters
 FILTERS=test
 
 # Source files
-SRC_FILES:=$(shell find src -type f -iname *.c | grep -v $(FILTERS))
+ifeq ($(OS),Windows_NT)
+	SRC_FILES:= $(filter-out test.c test.o,$(wildcard src/*.c src/*/*.c))
+else
+	SRC_FILES:=$(shell find src -type f -iname *.c | grep -v $(FILTERS))
+endif
 # SRC_FILES = $(wildcard src/[^(test)]*.c src/*/[^(test)]*.c)
 OBJ_FILES = $(SRC_FILES:.c=.o)
 
 # Output executable name
-EXECUTABLE = cli-engine
+
 
 all: $(EXECUTABLE)
 
@@ -33,11 +46,16 @@ debug: compile
 	gdb ./cli-engine
 
 clean:
-		rm -f $(OBJ_FILES) $(EXECUTABLE)
+ifeq ($(OS),Windows_NT)
+	rm ./src/*.o
+	rm  ./src/*/*.o
+	rm ./*.exe
+else
+	rm $(OBJ_FILES) $(EXECUTABLE)
+endif
 
 run: $(EXECUTABLE)
 	./cli-engine
-# 	rm -f $(OBJ_FILES) $(EXECUTABLE)
 
 test:
 	echo -e "Done✅"

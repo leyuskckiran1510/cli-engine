@@ -6,7 +6,8 @@
 #define ST "\0"
 
 void clear_screen(){
-#ifdef __DOS__
+#ifdef __APPLE__
+#elif defined _WIN32 || defined _WIN64
   system("cls");
 #else
   if(system("clear")){

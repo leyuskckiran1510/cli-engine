@@ -2,7 +2,6 @@
 #define __CANVAS__
 
 #include "colors.h"
-#include "stdlib.h"
 
 typedef struct Canvas Canvas;
 

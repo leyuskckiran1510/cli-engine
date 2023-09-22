@@ -10,18 +10,68 @@ termios — MAN page
     or 
     man 3 termios
 */
-struct termios orig_termios;
-void reset_terminal_mode() { tcsetattr(0, TCSANOW, &orig_termios); }//resetting
-void set_conio_terminal_mode() {
-  struct termios new_termios;
-  tcgetattr(0, &orig_termios); //tc-get-attr , retriving the current terminal console config
-  memcpy(&new_termios, &orig_termios, sizeof(new_termios)); //coping the original config
-  cfmakeraw(&new_termios); //cf-make-raw , config set to raw mode
-  new_termios.c_oflag = orig_termios.c_oflag; // changing the new raw config's output mode to 
-                                              // default output as raw output will cause problem 
-                                              //while rendering ansi character
-  tcsetattr(0, TCSANOW, &new_termios);//tc-set-attr, setting the terminal to new config
+
+
+#ifdef __APPLE__
+#elif defined _WIN32 || defined _WIN64
+   HANDLE hStdout, hStdin;
+   DWORD inMode, inOldMode;//cRead, 
+   DWORD outMode, outOldMode;//cRead, 
+  void reset_terminal_mode() {
+     if(!SetConsoleMode(hStdin, inOldMode)) {
+      exit(GetLastError());
+    } 
+    if(!SetConsoleMode(hStdout, outOldMode)) {
+      exit(GetLastError());
+    } 
+  }//resetting
+  void set_conio_terminal_mode() {
+
+    hStdin = GetStdHandle(STD_INPUT_HANDLE);
+    hStdout = GetStdHandle(STD_OUTPUT_HANDLE);
+    if (hStdin == INVALID_HANDLE_VALUE ||
+        hStdout == INVALID_HANDLE_VALUE){
+        exit(GetLastError());
+    }
+
+    if (! GetConsoleMode(hStdin, &inOldMode)){
+       exit(GetLastError());
+    }
+    if (! GetConsoleMode(hStdout, &outOldMode)){
+           exit(GetLastError());
+        }
+
+    inMode = inOldMode &
+        ~(ENABLE_LINE_INPUT | ENABLE_ECHO_INPUT);
+    outMode = outOldMode;
+    outMode |= ENABLE_VIRTUAL_TERMINAL_PROCESSING;
+    if (! SetConsoleMode(hStdin, inMode)){
+       exit(GetLastError());
+    }
+    if (! SetConsoleMode(hStdout, outMode)){
+       exit(GetLastError());
+    }
+    
+
 }
+
+#else
+  struct termios orig_termios;
+  void reset_terminal_mode() { tcsetattr(0, TCSANOW, &orig_termios); }//resetting
+  void set_conio_terminal_mode() {
+    struct termios new_termios;
+    tcgetattr(0, &orig_termios); //tc-get-attr , retriving the current terminal console config
+    memcpy(&new_termios, &orig_termios, sizeof(new_termios)); //coping the original config
+    cfmakeraw(&new_termios); //cf-make-raw , config set to raw mode
+    new_termios.c_oflag = orig_termios.c_oflag; // changing the new raw config's output mode to 
+                                                // default output as raw output will cause problem 
+                                                //while rendering ansi character
+    tcsetattr(0, TCSANOW, &new_termios);//tc-set-attr, setting the terminal to new config
+  }
+
+#endif
+
+
 
 //base64 character set
 static char charset[64] = {'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K',
