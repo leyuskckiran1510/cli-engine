@@ -10,9 +10,7 @@ void clear_screen(){
 #elif defined _WIN32 || defined _WIN64
   system("cls");
 #else
-  if(system("clear")){
-    
-  };
+  system("clear");
 #endif
 }
 

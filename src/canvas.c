@@ -13,6 +13,7 @@ void canvas_draw(Canvas *canvas) {
    #ifndef _WIN32
   char utf8[4];
   #endif
+  
   printf("\033[1;1H\033[?25l");
   // printf("\x1b[2J""\033[?25l");
   for (int i = 0; i < canvas->height-padding; i += 2) {

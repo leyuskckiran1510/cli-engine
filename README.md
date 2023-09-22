@@ -16,3 +16,6 @@ make
 ![2023-Sep-19:21-09-45 PM](./images/_09_19_23.png)
 `2023-Sep-21:16-04-02 PM` eventloop and window title
 ![2023-Sep-21:16-04-02 PM](./images/_09_21_23.png)
+
+`2023-Sep-22:12-12-48 PM` eventloop and window title
+![2023-Sep-22:12-12-48 PM](./images/_09_22_23.png)

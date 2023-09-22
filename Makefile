@@ -4,7 +4,7 @@ CC = gcc
 
 # Compiler flags
 ifeq ($(OS),Windows_NT)
-	CFLAGS = -ggdb -Wall -Wextra -O3 -pedantic 
+	CFLAGS = -ggdb -Wall -Wextra  -pedantic -O3
 	EXECUTABLE = cli-engine.exe
 	LIBS = -lm -lWs2_32
 else
