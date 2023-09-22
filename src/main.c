@@ -57,9 +57,6 @@ int main() {
   clear_screen();
   Canvas *c = InitWindow(127,80,"HELLOW WORLDDD ;D");
   shapes_test(c);
-  // c->draw(c);
-  // getchar();
-  // return 0;
   vec2 ball1 = {.x=10,.y=20};
   // vec2 ball2 = {.x=30,.y=30};
   int dx=1,dy=1;

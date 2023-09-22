@@ -13,6 +13,8 @@
 #include "utils/util.h"
 #include "shapes/shapes.h"
 
+void clear_screen();
+
 Canvas* InitWindow(int width, int height, const char *title);  // Initialize window and OpenGL context
 // bool WindowShouldClose(void);                               // Check if KEY_ESCAPE pressed or Close icon pressed
 // void CloseWindow(void);                                     // Close window and unload OpenGL context
