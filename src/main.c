@@ -4,6 +4,7 @@
 #include "utils/util.h"
 
 
+#include <stddef.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
@@ -63,7 +64,7 @@ int main() {
   vec_circle balls[2] = {{.x = 100.f, .y = 1, .r = 10},
                          {.x = 30, .y = 30, .r = 5}};
   vec2f velocs[2] = {{1.f, 0.f}, {2.f, 2.f}};
-  float gravity = 100;
+  float gravity = 300;
   char key;
   while (1) {
     key = keypress();
@@ -76,7 +77,7 @@ int main() {
     }
     }
 
-    for (int i = 0; i < sizeof(balls) / sizeof(vec_circle); i++) {
+    for (size_t i = 0; i < sizeof(balls) / sizeof(vec_circle); i++) {
       // for (int j = i + 1; j < sizeof(balls) / sizeof(vec_circle); j++) {
       //   if ((balls[i].x + balls[i].r >= balls[j].x - balls[j].r ||
       //        balls[i].x - balls[i].r <= balls[j].x + balls[j].r) &&
@@ -106,7 +107,8 @@ int main() {
     c->draw(c);
     c->fill(c, BLACK);
     // printf("%f %f %f\n",velocs[1].x,velocs[1].y,velocs[0].y);
-    usleep(1000 * 100 / 30);
+    usleep(1000 * 1000 / 60);
   }
+  reset_all();
   return 0;
 }

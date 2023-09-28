@@ -15,6 +15,7 @@ void clear_screen(){
 }
 
 void reset_all(){
+  printf("\x1b[0m");
   reset_terminal_mode();
   clear_screen();
 }
