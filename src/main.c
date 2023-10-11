@@ -72,7 +72,7 @@ int main() {
     case KEY_q:
     case KEY_Q: {
       free_all(c);
-      // copy_to_clipboard("Thank you for using cli-engine "); //easter egg
+      copy_to_clipboard("Thank you for using cli-engine "); //easter egg
       return 0;
     }
     }
@@ -107,7 +107,7 @@ int main() {
     c->draw(c);
     c->fill(c, BLACK);
     // printf("%f %f %f\n",velocs[1].x,velocs[1].y,velocs[0].y);
-    usleep(1000 * 1000 / 60);
+    usleep(1000 * 1000 / 120);
   }
   reset_all();
   return 0;

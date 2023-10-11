@@ -52,8 +52,8 @@ void canvas_draw(Canvas *canvas) {
       // #endif
     }
   // printf("%s\n",RESET_COLOR);
-    strcpy(&display_buf[buf_ptr],RESET_COLOR);
     display_buf[buf_ptr++]='\n';
+    strcpy(&display_buf[buf_ptr],RESET_COLOR);
   }
   fprintf(stdout,"%s",display_buf);
   printf("\033[1;1H\033[?25h");

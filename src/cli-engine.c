@@ -6,11 +6,14 @@
 #define ST "\0"
 
 void clear_screen(){
-#ifdef __APPLE__
-#elif defined _WIN32 || defined _WIN64
+// #ifdef __APPLE__
+// 	system("clear");
+// #elif defined _WIN32 || defined _WIN64
+#if defined _WIN32 || defined _WIN64
   system("cls");
 #else
-  system("clear");
+  if(system("clear"))
+    return;
 #endif
 }
 
