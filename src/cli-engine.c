@@ -3,22 +3,17 @@
 #include "utils/util.h"
 #include <stdio.h>
 
-#define ST "\0"
-
 void clear_screen(){
-// #ifdef __APPLE__
-// 	system("clear");
-// #elif defined _WIN32 || defined _WIN64
 #if defined _WIN32 || defined _WIN64
-  system("cls");
+  int __unused = system("cls");
 #else
-  if(system("clear"))
-    return;
+  int __unused = system("clear");
+  (void)(__unused);
 #endif
 }
 
 void reset_all(){
-  printf("\x1b[0m");
+  printf("\x1b[?1049h\033[1;1H\033[?25h\x1b[?7h\x1b[0m\x1b[m");
   reset_terminal_mode();
   clear_screen();
 }
@@ -26,7 +21,8 @@ void reset_all(){
 Canvas* InitWindow(int width, int height, const char *title){
   set_conio_terminal_mode();
   Canvas *c = canvas_init(width,height);
-  printf("\033]0;%s\a\033]m",title);
+  printf("\x1b[?25l\x1b[?7l");
+  printf("\x1b]0;%s\a\n",title);
   atexit(reset_all);
   return c;
 }

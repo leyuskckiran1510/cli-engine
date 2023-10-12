@@ -11,9 +11,7 @@ termios — MAN page
     man 3 termios
 */
 
-
-#ifdef __APPLE__
-#elif defined _WIN32 || defined _WIN64
+#if defined _WIN32 || defined _WIN64
    HANDLE hStdout, hStdin;
    DWORD inMode, inOldMode;//cRead, 
    DWORD outMode, outOldMode;//cRead, 
@@ -96,16 +94,12 @@ char *base64(char *normal) {
                252) >>//0b11111100
               2;
     if (counter % 4 == 0) {
-
       buffer = normal[n_index] & 3; //0b00000011
     } else if (counter % 4 == 1) {
-
       buffer = normal[n_index] & 15;//0b00001111
     } else if (counter % 4 == 2) {
-
       buffer = normal[n_index] & 63;//0b00111111
     } else if (counter % 4 == 3) {
-
       buffer = 0;
       n_index -= 1;
     }
@@ -170,5 +164,8 @@ void unsigned_to_unicode(unsigned int x, char *buffer) {
     buffer[2] = offset_0 | ((x >> 6 * 1) & mask_1);
     buffer[1] = offset_0 | ((x >> 6 * 2) & mask_2);
     buffer[0] = offset_3 | ((x >> 6 * 3) & mask_3);
+  }
+  else{
+    strcpy(buffer,"\0");
   }
 }

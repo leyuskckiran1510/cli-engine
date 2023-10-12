@@ -8,6 +8,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
+#include <unistd.h>
 
 typedef struct {
   float x, y;
@@ -60,7 +61,7 @@ void free_all(Canvas *c) {
 
 int main() {
   clear_screen();
-  Canvas *c = InitWindow(127, 80, "HELLOW WORLDDD ;D");
+  Canvas *c = InitWindow(127, 80, "HELLO TTY");
   vec_circle balls[2] = {{.x = 100.f, .y = 1, .r = 10},
                          {.x = 30, .y = 30, .r = 5}};
   vec2f velocs[2] = {{1.f, 0.f}, {2.f, 2.f}};
@@ -75,6 +76,13 @@ int main() {
       copy_to_clipboard("Thank you for using cli-engine "); //easter egg
       return 0;
     }
+    case KEY_a:
+    case KEY_A: {
+      printf("Pressed A/a");
+      usleep(5000);
+      break;
+    }
+    default:break;
     }
 
     for (size_t i = 0; i < sizeof(balls) / sizeof(vec_circle); i++) {

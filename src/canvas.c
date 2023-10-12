@@ -6,20 +6,25 @@
 #include "cli-engine.h"
 #include "colors.h"
 
-int SWAP=1;
+int SWAP=0;
+
+void unsigned_to_unicode2(unsigned int x, char *utf8){
+  unsigned_to_unicode(x,utf8);
+  // strcpy(utf8,"0");
+}
 
 void canvas_draw(Canvas *canvas) {
   /*
     For now making sure that we dont touch the unallocated memory when height is odd
   */
-  int padding = canvas->height%2;
   // len('\033[38;2;255;255;255;48;2;255;255;255mXX') = 41+1 (+1 for jsut to be sure)
+  int pixel_size = 42;
+  int padding = canvas->height%2;
   // len("\x1b[?1049h\033[1;1H\033[?25l") = 21
-  char *display_buf = malloc((canvas->height*canvas->width*42)+21);
+  char *display_buf = malloc((canvas->height*canvas->width*pixel_size)+21);
   int buf_ptr=0;
-  #ifndef _WIN32
   char utf8[4];
-  #endif
+  char char_pixel[pixel_size];
   /*
     buffer0 = "\x1b[?1049h"
     buffer1 = "\x1b[?1049l"
@@ -28,7 +33,7 @@ void canvas_draw(Canvas *canvas) {
     strcpy(display_buf,"\x1b[?1049h\033[1;1H\033[?25l");
   }
   else{
-   strcpy(display_buf,"\x1b[?1049h\033[1;1H\033[?25l");
+   strcpy(display_buf,"\x1b[?1049l\033[1;1H\033[?25l");
   }
   buf_ptr+=strlen("\x1b[?1049h\033[1;1H\033[?25l");
   SWAP^=1;
@@ -37,28 +42,17 @@ void canvas_draw(Canvas *canvas) {
       Color c1 = canvas->surface[(i + 1 * 0) * canvas->width + j];
       Color c2 = canvas->surface[(i + 1 * 1) * canvas->width + j];
       FBColor c = color_merge(c1, c2);
-      char pixel[50];
       (void)unsigned_to_unicode(c.c.u, utf8);
-      sprintf(pixel,"\033[38;2;%d;%d;%d;48;2;%d;%d;%dm%s", COLOR(c.fg), COLOR(c.bg),utf8);
-      strcpy(&display_buf[buf_ptr],pixel);
-      buf_ptr+=strlen(pixel);
-      // #ifdef _WIN32
-      // printf("\033[38;2;%d;%d;%d;48;2;%d;%d;%dm%s", COLOR(c.fg), COLOR(c.bg),
-      //        "O");
-      // #else
-      // (void)unsigned_to_unicode(c.c.u, utf8);
-      // printf("\033[38;2;%d;%d;%d;48;2;%d;%d;%dm%s", COLOR(c.fg), COLOR(c.bg),
-      //        utf8);
-      // #endif
+      snprintf(char_pixel,pixel_size,"\033[38;2;%02d;%02d;%02d;48;2;%02d;%02d;%02dm%s", COLOR(c.fg), COLOR(c.bg),utf8);
+      strcpy(&display_buf[buf_ptr],char_pixel);
+      buf_ptr+=strlen(char_pixel);
     }
-  // printf("%s\n",RESET_COLOR);
     display_buf[buf_ptr++]='\n';
     strcpy(&display_buf[buf_ptr],RESET_COLOR);
   }
-  fprintf(stdout,"%s",display_buf);
+  printf("%s",display_buf);
   printf("\033[1;1H\033[?25h");
   free(display_buf);
-  // exit(1);
 }
 
 

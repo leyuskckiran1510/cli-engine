@@ -1,5 +1,4 @@
-#ifdef __APPLE__
-#elif defined _WIN32 || defined _WIN64
+#if defined _WIN32 || defined _WIN64
   #ifndef WIN32_LEAN_AND_MEAN
   #define WIN32_LEAN_AND_MEAN
   #endif
@@ -44,7 +43,7 @@ char keypress(){
     int timeout = 0;
     struct pollfd input[] = {{.events = POLLIN}};
     if (poll(input, poll_count, timeout)) {
-      unsigned char buffer;
+      char buffer;
       if (read(0, &buffer, sizeof(buffer))>0) {
         return buffer;
       }
