@@ -169,3 +169,13 @@ void unsigned_to_unicode(unsigned int x, char *buffer) {
     strcpy(buffer,"\0");
   }
 }
+
+vec2i get_terminal_size(){
+  struct winsize w;
+  vec2i temp;
+  ioctl(STDOUT_FILENO, TIOCGWINSZ, &w);
+  temp.x = w.ws_col;
+  temp.y = w.ws_row;
+  return temp;
+}
+

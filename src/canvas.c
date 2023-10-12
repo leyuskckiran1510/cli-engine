@@ -2,68 +2,62 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "ansi_codes.h"
 #include "canvas.h"
 #include "cli-engine.h"
 #include "colors.h"
+#include "utils/util.h"
 
-int SWAP=0;
-
-void unsigned_to_unicode2(unsigned int x, char *utf8){
-  unsigned_to_unicode(x,utf8);
-  // strcpy(utf8,"0");
-}
+int SWAP = 0;
 
 void canvas_draw(Canvas *canvas) {
-  /*
-    For now making sure that we dont touch the unallocated memory when height is odd
-  */
-  // len('\033[38;2;255;255;255;48;2;255;255;255mXX') = 41+1 (+1 for jsut to be sure)
-  int pixel_size = 42;
-  int padding = canvas->height%2;
-  // len("\x1b[?1049h\033[1;1H\033[?25l") = 21
-  char *display_buf = malloc((canvas->height*canvas->width*pixel_size)+21);
-  int buf_ptr=0;
+
+  int padding = canvas->height % 2;
+  vec2i w = get_terminal_size();
+  if(w.x < 100 && w.y < 100){
+    exit(0);
+  }
+
+  int pixel_size = strlen(ANSI_FGBG_RGB_FMT);
+  int header_length = strlen(ANSI_BUFFER1 ANSI_CURSOR(1, 1) ANSI_CURSOR_N);
+
+  char *pixel_buffer =
+      malloc((canvas->height * canvas->width * pixel_size) + header_length);
+
   char utf8[4];
-  char char_pixel[pixel_size];
-  /*
-    buffer0 = "\x1b[?1049h"
-    buffer1 = "\x1b[?1049l"
-  */
-  if(SWAP){
-    strcpy(display_buf,"\x1b[?1049h\033[1;1H\033[?25l");
+  int buffer_index = 0;
+
+  if (SWAP) {
+    strcpy(pixel_buffer, ANSI_BUFFER1 ANSI_CURSOR(1, 1) ANSI_CURSOR_N);
+  } else {
+    strcpy(pixel_buffer, ANSI_BUFFER2 ANSI_CURSOR(1, 1) ANSI_CURSOR_N);
   }
-  else{
-   strcpy(display_buf,"\x1b[?1049l\033[1;1H\033[?25l");
-  }
-  buf_ptr+=strlen("\x1b[?1049h\033[1;1H\033[?25l");
-  SWAP^=1;
-  for (int i = 0; i < canvas->height-padding; i += 2) {
+  buffer_index += header_length;
+
+  for (int i = 0; i < canvas->height - padding; i += 2) {
     for (int j = 0; j < canvas->width; j++) {
       Color c1 = canvas->surface[(i + 1 * 0) * canvas->width + j];
       Color c2 = canvas->surface[(i + 1 * 1) * canvas->width + j];
       FBColor c = color_merge(c1, c2);
       (void)unsigned_to_unicode(c.c.u, utf8);
-      snprintf(char_pixel,pixel_size,"\033[38;2;%02d;%02d;%02d;48;2;%02d;%02d;%02dm%s", COLOR(c.fg), COLOR(c.bg),utf8);
-      strcpy(&display_buf[buf_ptr],char_pixel);
-      buf_ptr+=strlen(char_pixel);
+      buffer_index +=
+          snprintf(&pixel_buffer[buffer_index], pixel_size,
+                   ANSI_FGBG_RGB_FMT "%s", COLOR(c.fg), COLOR(c.bg), utf8);
     }
-    display_buf[buf_ptr++]='\n';
-    strcpy(&display_buf[buf_ptr],RESET_COLOR);
+    pixel_buffer[buffer_index++] = '\n';
+    strcpy(&pixel_buffer[buffer_index], RESET_COLOR);
+    buffer_index+=4;
   }
-  printf("%s",display_buf);
-  printf("\033[1;1H\033[?25h");
-  free(display_buf);
+  printf("%s", pixel_buffer);
+  printf(ANSI_CURSOR(1, 1) ANSI_CURSOR_Y);
+  free(pixel_buffer);
+  SWAP ^= 1;
 }
 
-
 void canvas_place(Canvas *canvas, int x, int y, Color color) {
-  if (x>=0 && x<canvas->width &&y>=0 && y < canvas->height){
-      canvas->surface[y * canvas->width + x] = color;
+  if (x >= 0 && x < canvas->width && y >= 0 && y < canvas->height) {
+    canvas->surface[y * canvas->width + x] = color;
   }
-  //if(liner_fill)
-  // if (y * canvas->width + x>=0 && y * canvas->width + x < canvas->height*canvas->width){
-  //     canvas->surface[y * canvas->width + x] = color;
-  // }
 }
 void canvas_fill(Canvas *canvas, Color with) {
   for (int i = 0; i < canvas->height; i++)

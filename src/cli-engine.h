@@ -11,8 +11,9 @@
 #include "canvas.h"
 #include "characters.h"
 #include "utils/util.h"
+#ifndef __SHAPES__
 #include "shapes/shapes.h"
-
+#endif
 void clear_screen();
 void reset_all();
 

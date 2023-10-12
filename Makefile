@@ -1,18 +1,22 @@
 # Makefile for Your Project
 # Compiler
 CC = gcc
+OPTIMIZE = -O3
 
 # Compiler flags
 ifeq ($(OS),Windows_NT)
-	CFLAGS = -ggdb -Wall -Wextra  -pedantic -O3
+	CFLAGS = -ggdb -Wall -Wextra  -pedantic $(OPTIMIZE)
 	EXECUTABLE = cli-engine.exe
 	LIBS = -lm -lWs2_32
 else
-	CFLAGS = -ggdb -Wall -Wextra -O3 -pedantic -fsanitize=address
+	CFLAGS = -ggdb -Wall -Wextra $(OPTIMIZE) -pedantic -fsanitize=address
 	EXECUTABLE = cli-engine
 	LIBS = -lm
 endif
 
+#Test File
+TEST_FILE = ./src/test.c
+TEST_FILE_OUT = ./test.out
 
 # Libraries
 
@@ -26,7 +30,8 @@ ifeq ($(OS),Windows_NT)
 else
 	SRC_FILES:=$(shell find src -type f -iname *.c | grep -v $(FILTERS))
 endif
-# SRC_FILES = $(wildcard src/[^(test)]*.c src/*/[^(test)]*.c)
+
+
 OBJ_FILES = $(SRC_FILES:.c=.o)
 
 # Output executable name
@@ -41,23 +46,27 @@ all: $(EXECUTABLE)
 $(EXECUTABLE): $(OBJ_FILES)
 		$(CC) $(CFLAGS)  $^ -o $@ $(LIBS)
 
-
 debug: compile
-	gdb ./cli-engine
+	gdb ./$(EXECUTABLE)
 
 clean:
 ifeq ($(OS),Windows_NT)
-	rm ./src/*.o
-	rm  ./src/*/*.o
-	rm ./*.exe
+	rm .\src\*.o
+	rm  .\src\*\*.o
+	rm .\*.exe
 else
 	rm $(OBJ_FILES) $(EXECUTABLE)
 endif
 
 run: $(EXECUTABLE)
-	./cli-engine
+	./$(EXECUTABLE)
 
 test:
+ifneq ("$(wildcard $(TEST_FILE))","")
+	$(CC) $(TEST_FILE) -o $(TEST_FILE_OUT)
+	$(TEST_FILE_OUT)
+	rm $(TEST_FILE_OUT)
+endif
 	echo -e "Done✅"
 
 .PHONY: all compile debug clean run

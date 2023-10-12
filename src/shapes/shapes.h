@@ -2,13 +2,13 @@
 #define __SHAPES__
 
 #ifndef __CLI_ENGINE__
-  #include "./../cli-engine.h"
+    #include "./../cli-engine.h"
 #endif
 
 typedef enum {
-  OUTLINE = 1,
-  FILLED = 2,
-  STROKED = OUTLINE | FILLED, // 3
+  OUTLINE = 1,                // 01
+  FILLED = 2,                 // 10
+  STROKED = OUTLINE | FILLED, // 11 or 3
 } SHAPE_TYPE;
 
 void rectangle(Canvas *c, int x, int y, int width, int height, Color color,
