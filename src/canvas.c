@@ -14,7 +14,7 @@ void canvas_draw(Canvas *canvas) {
 
   int padding = canvas->height % 2;
   vec2i w = get_terminal_size();
-  if(w.x < 100 && w.y < 100){
+  if (w.x < 100 && w.y < 100) {
     exit(0);
   }
 
@@ -23,8 +23,9 @@ void canvas_draw(Canvas *canvas) {
 
   char *pixel_buffer =
       malloc((canvas->height * canvas->width * pixel_size) + header_length);
-
-  char utf8[4];
+  // Filling it zero as 'C' fucking uses NULL terminated string
+  // which causes heap-overflow in all functions like printf,snprintf...
+  char utf8[4] = "\0\0\0\0"; // just to be sure
   int buffer_index = 0;
 
   if (SWAP) {
@@ -46,7 +47,7 @@ void canvas_draw(Canvas *canvas) {
     }
     pixel_buffer[buffer_index++] = '\n';
     strcpy(&pixel_buffer[buffer_index], RESET_COLOR);
-    buffer_index+=4;
+    buffer_index += 4;
   }
   printf("%s", pixel_buffer);
   printf(ANSI_CURSOR(1, 1) ANSI_CURSOR_Y);

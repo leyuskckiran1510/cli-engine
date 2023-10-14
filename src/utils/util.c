@@ -63,8 +63,12 @@ termios — MAN page
     cfmakeraw(&new_termios); //cf-make-raw , config set to raw mode
     new_termios.c_oflag = orig_termios.c_oflag; // changing the new raw config's output mode to 
                                                 // default output as raw output will cause problem 
-                                                //while rendering ansi character
-    tcsetattr(0, TCSANOW, &new_termios);//tc-set-attr, setting the terminal to new config
+                                                // while rendering ansi character
+    #ifdef _DEBUG
+      tcsetattr(0, TCSANOW, &orig_termios);//tc-set-attr, setting the terminal to old config
+    #else
+      tcsetattr(0, TCSANOW, &new_termios);//tc-set-attr, setting the terminal to new config
+    #endif
   }
 
 #endif

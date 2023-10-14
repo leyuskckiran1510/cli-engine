@@ -1,11 +1,11 @@
 # Makefile for Your Project
 # Compiler
 CC = gcc
-OPTIMIZE = -O3
+OPTIMIZE = -O0
 
 # Compiler flags
 ifeq ($(OS),Windows_NT)
-	CFLAGS = -ggdb -Wall -Wextra  -pedantic $(OPTIMIZE)
+	CFLAGS = -g3 -ggdb -Wall -Wextra  -pedantic $(OPTIMIZE)
 	EXECUTABLE = cli-engine.exe
 	LIBS = -lm -lWs2_32
 else
@@ -33,18 +33,17 @@ endif
 
 
 OBJ_FILES = $(SRC_FILES:.c=.o)
-
-# Output executable name
-
+# DEFINES = -D_DEBUG
+DEFINES = -D__ANIMATION__
 
 all: $(EXECUTABLE)
 
 # Rule to compile C source files into object files
 %.o: %.c
-		$(CC) $(CFLAGS) -c $< -o $@ $(LIBS)
+		$(CC) $(CFLAGS) -c $< -o $@ $(LIBS) $(DEFINES)
 
 $(EXECUTABLE): $(OBJ_FILES)
-		$(CC) $(CFLAGS)  $^ -o $@ $(LIBS)
+		$(CC) $(CFLAGS)  $^ -o $@ $(LIBS) 
 
 debug: compile
 	gdb ./$(EXECUTABLE)

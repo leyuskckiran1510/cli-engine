@@ -1,5 +1,6 @@
 #include "canvas.h"
 #include "cli-engine.h"
+#include "colors.h"
 #include "event.h"
 #include "shapes/shapes.h"
 #include "utils/util.h"
@@ -35,20 +36,33 @@ void metaball(Canvas *c, vec_circle ball1, vec_circle ball2) {
     }
   }
 }
-
 void shapes_test(Canvas *c) {
-  rectangle(c, 10, 10, 50, 50, BLUE, OUTLINE);
   line(c, 10, 10, 60, 60, YELLOW);
   line(c, 60, 10, 10, 60, YELLOW);
-  rectangle(c, 10, 10, 40, 30, RED, FILLED);
-  circle(c, 30 + c->width / 2, 0 + c->height / 2, 21, RED, OUTLINE);
+  line(c, 0, 0, 100, 100, BLUE);
+  line(c, 0, 0, c->width, 0, (Color){.r = 10, .b = 20, .g = 0});
+  line(c, 0, 0, 0, c->height, (Color){.r = 17, .b = 39, .g = 27});
+  line(c, 0, 0, c->width, c->height, (Color){.r = 24, .b = 58, .g = 54});
+  line(c, c->width, 0, 0, c->height, (Color){.r = 31, .b = 77, .g = 81});
+  line(c, c->width, c->height - 1, 0, c->height - 1,
+       (Color){.r = 38, .b = 96, .g = 108});
+  line(c, c->width - 1, c->height - 1, c->width - 1, 0,
+       (Color){.r = 45, .b = 115, .g = 135});
+  
+
+  circle(c, 0, 0, 10, YELLOW, STROKED);
+  circle(c,c->width, 0 + c->height / 2, 21, RED, OUTLINE);
   circle(c, 30 + c->width / 2, 0 + c->height / 2, 20, YELLOW, FILLED);
-  circle(c, 60 + c->width / 2, 30 + c->height / 2,10, YELLOW, STROKED);
+  circle(c, 60 + c->width / 2, 30 + c->height / 2, 10, YELLOW, STROKED);
+
+
+  rectangle(c, 10, 10, 50, 50, BLUE, OUTLINE);
+  rectangle(c, 10, 10, 40, 30, GREEN, FILLED);
   rectangle(c, 60, 30, 13, 13, BLUE, STROKED);
 }
 
 void bouncingball(Canvas *canvas, vec_circle ball) {
-  circle(canvas, ball.x, ball.y, ball.r, RED, STROKED);
+  circle(canvas, ball.x, ball.y, ball.r, RED, OUTLINE);
 }
 
 void free_all(Canvas *c) {
@@ -62,18 +76,14 @@ void free_all(Canvas *c) {
 int main() {
   clear_screen();
   Canvas *c = InitWindow(127, 80, "HELLO TTY");
-  vec_circle balls[5] = {{.x = 100.f, .y = 1, .r = 10},
-                         {.x = 30, .y = 0, .r = 5},
-                         {.x = 40, .y = 13, .r = 6},
-                         {.x = 50, .y = 26, .r = 7},
-                         {.x = 60, .y = 39, .r = 8},
-                       };
-  vec2f velocs[5] = {{1.f, 0.f},
-                     {2.f, 2.f},
-                     {2.f, 2.f},
-                     {2.f, 2.f},
-                     {2.f, 2.f},
-                   };
+  vec_circle balls[5] = {
+      {.x = 100.f, .y = 1, .r = 10}, {.x = 30, .y = 0, .r = 5},
+      {.x = 40, .y = 13, .r = 6},    {.x = 50, .y = 56, .r = 7},
+      {.x = 60, .y = 39, .r = 8},
+  };
+  vec2f velocs[5] = {
+      {1.f, 0.f}, {2.f, 2.f}, {2.f, 2.f}, {2.f, 2.f}, {2.f, 2.f},
+  };
   float gravity = 300;
   char key;
   while (1) {
@@ -94,40 +104,41 @@ int main() {
     default:
       break;
     }
+#ifdef __ANIMATION__
+    for (size_t i = 0; i < sizeof(balls) / sizeof(vec_circle); i++) {
+      for (size_t j = i; j < sizeof(balls) / sizeof(vec_circle); j++) {
+        if (i == j)
+          continue;
+        if ((balls[i].x + balls[i].r >= balls[j].x - balls[j].r &&
+             balls[i].x + balls[i].r <= balls[j].x + balls[j].r) &&
+            (balls[i].y + balls[i].r >= balls[j].y - balls[j].r &&
+             balls[i].y + balls[i].r <= balls[j].y + balls[j].r)) {
+          velocs[i].x *= -1;
+          velocs[j].x *= -1;
+          velocs[i].y *= -1;
+          velocs[j].y *= -1;
+        }
+      }
+      if (balls[i].x - balls[i].r <= 0 || balls[i].x >= c->width - balls[i].r) {
+        velocs[i].x *= -0.9;
+      }
 
-    // for (size_t i = 0; i < sizeof(balls) / sizeof(vec_circle); i++) {
-    //   for (size_t j = i; j < sizeof(balls) / sizeof(vec_circle); j++) {
-    //     if (i == j)
-    //       continue;
-    //     if ((balls[i].x + balls[i].r >= balls[j].x - balls[j].r &&
-    //          balls[i].x + balls[i].r <= balls[j].x + balls[j].r) &&
-    //       (balls[i].y + balls[i].r >= balls[j].y - balls[j].r &&
-    //          balls[i].y + balls[i].r <= balls[j].y + balls[j].r)) {
-    //       velocs[i].x *= -1;
-    //       velocs[j].x *= -1;
-    //       velocs[i].y *= -1;
-    //       velocs[j].y *= -1;
-    //     }
-    //   }
-    //   if (balls[i].x - balls[i].r <= 0 || balls[i].x >= c->width - balls[i].r) {
-    //     velocs[i].x *= -0.9;
-    //   }
+      if (balls[i].y >= c->height - balls[i].r) {
+        balls[i].y = c->height - balls[i].r;
+        velocs[i].y *= -0.7;
+      }
+      balls[i].x += velocs[i].x;
+      balls[i].y += velocs[i].y * (1.0f / 30);
 
-    //   if (balls[i].y >= c->height - balls[i].r) {
-    //     balls[i].y = c->height - balls[i].r;
-    //     velocs[i].y *= -0.7;
-    //   }
-    //   balls[i].x += velocs[i].x;
-    //   balls[i].y += velocs[i].y * (1.0f / 30);
-
-    //   velocs[i].y += (gravity * (1.0f / 30));
-    //   bouncingball(c, balls[i]);
-    // }
+      velocs[i].y += (gravity * (1.0f / 30));
+      bouncingball(c, balls[i]);
+    }
+#else
     shapes_test(c);
+#endif
     c->draw(c);
     c->fill(c, BLACK);
     usleep(1000 * 1000 / FPS);
   }
-  reset_all();
   return 0;
 }
