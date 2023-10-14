@@ -15,70 +15,118 @@ void rectangle(Canvas *c, int x, int y, int width, int height, Color color,
   if (type&FILLED) {
     for (int j = y ; j < y + height; j++) {
       for (int i = x ; i < x + width; i++) {
-        c->surface[j * c->width + i] = color;
+        canvas_place(c,i,j,color);
       }
     }
   }
   if(type&OUTLINE){
     for (int i = x; i < x + width; i++) {
-      c->surface[y * c->width + i] = color;
+       canvas_place(c,i,y,color);
     }
     for (int i = x; i < x + width; i++) {
-      c->surface[(y + height) * c->width + i] = color;
+       canvas_place(c,i,y+height,color);
     }
     for (int i = y; i < y + height; i++) {
-      c->surface[i * c->width + x] = color;
+       canvas_place(c,x,i,color);
     }
     for (int i = y; i <= y + height; i++) {
-      c->surface[i * c->width + (x + width)] = color;
+       canvas_place(c,x+width,i,color);
     }
   }
   
 }
+// void line(Canvas *c,int sx, int sy, int ex, int ey, Color color) {
+//     int dx = ex - sx;
+//     int dy = ey - sy;
+//     int dx1 = dx;
+//     int dy1 = dy;
 
-void line(Canvas *c, int sx, int sy, int ex, int ey, Color color) {
-  // Besenham line drawing algorithm
-  int p = 0, dx = 0, dy = 0, x = 0, y = 0, xinc = 1, yinc = 1, a = 0, b = 0,
-      swaped = 0;
-  dx = ex - sx;
-  dy = ey - sy;
-  xinc = 1;
-  yinc = 1;
-  if (dx < 0) {
-    xinc = -1;
-    dx = -dx;
-  }
-  if (dy < 0) {
-    yinc = -1;
-    dy = -dy;
-  }
-  x = sx;
-  y = sy;
-  a = dy;
-  b = dx;
-  if (dx < dy) {
-    swaped = 1;
-    int_swap(&a, &b);
-    int_swap(&x, &y);
-    int_swap(&xinc, &yinc);
-  }
-  p = 2 * a - b;
-  for (int i = 0; i < b; i++) {
-    if (swaped) {
-      c->place(c, x, y, color);
-    } else {
-      c->place(c, y, x, color);
+//     if (dx < 0){
+//         dx1 = -dx;
+//         int_swap(&ex,&sx);
+//     }
+//     if (dy < 0){
+//         dy1 = -dy;
+//         int_swap(&ey,&sy);
+//     }
+
+//     if (dx1 >= dy1) {
+//         // if (dx < 0) {
+//         // }
+//         int x = sx;
+//         int y = sy;
+//         int d = 2 * dy1 - dx1;
+//         int incrE = 2 * dy1;
+//         int incrNE = 2 * (dy1 - dx1);
+
+//         while (x < ex) {
+//             if (d <= 0)
+//                 d += incrE;
+//             else {
+//                 d += incrNE;
+//                 if (dy < 0)
+//                     y--;
+//                 else
+//                     y++;
+//             }
+//             x++;
+//             canvas_place(c,x,y,color);
+//         }
+//     } else {
+//         // if (dy < 0) {
+//         //     int_swap(&ex,&sx);
+//         //     int_swap(&ey,&sy);
+//         // }
+//         int x = sx;
+//         int y = sy;
+//         int d = 2 * dx1 - dy1;
+//         int incrN = 2 * dx1;
+//         int incrNE = 2 * (dx1 - dy1);
+
+//         while (y < ey) {
+//             if (d <= 0)
+//                 d += incrN;
+//             else {
+//                 d += incrNE;
+//                 if (dx < 0)
+//                     x--;
+//                 else
+//                     x++;
+//             }
+//             y++;
+//             canvas_place(c,x,y,color);
+//         }
+//     }
+// }
+
+void line(Canvas *c,int x,int y,int x2, int y2, Color color) {
+    int w = x2 - x ;
+    int h = y2 - y ;
+    int dx1 = 0, dy1 = 0, dx2 = 0, dy2 = 0 ;
+    if (w<0) dx1 = -1 ; else if (w>0) dx1 = 1 ;
+    if (h<0) dy1 = -1 ; else if (h>0) dy1 = 1 ;
+    if (w<0) dx2 = -1 ; else if (w>0) dx2 = 1 ;
+    int longest = abs(w) ;
+    int shortest = abs(h) ;
+    if (!(longest>shortest)) {
+        longest = abs(h) ;
+        shortest = abs(w) ;
+        if (h<0) dy2 = -1 ; else if (h>0) dy2 = 1 ;
+        dx2 = 0 ;            
     }
-    y += yinc * (p >= 0);
-    p = p - ((2 * b) * (p >= 0));
-    x += xinc;
-    p += 2 * a;
-  }
-  if (swaped) {
-    c->place(c, x, y, color);
-  } else {
-    c->place(c, y, x, color);
-  }
+    int numerator = longest >> 1 ;
+    for (int i=0;i<=longest;i++) {
+        canvas_place(c,x,y,color);
+        numerator += shortest ;
+        if (!(numerator<longest)) {
+            numerator -= longest ;
+            x += dx1 ;
+            y += dy1 ;
+        } else {
+            x += dx2 ;
+            y += dy2 ;
+        }
+    }
 }
 
 void circle_variance(Canvas *c, int x, int y, int xorg, int yorg, Color color) {
