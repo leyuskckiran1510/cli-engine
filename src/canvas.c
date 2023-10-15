@@ -10,22 +10,28 @@
 
 int SWAP = 0;
 
-void canvas_draw(Canvas *canvas) {
 
-  int padding = canvas->height % 2;
+void mapper();
+
+void canvas_draw(Canvas *canvas) {
   vec2i w = get_terminal_size();
-  if (w.x < 100 && w.y < 100) {
+  if (w.x < 100 &&  w.y < 100) {
+    printf("Max X:[%d] \t Max Y:[%d]",w.x,w.y);
+    getchar();
     exit(0);
   }
+
 
   int pixel_size = strlen(ANSI_FGBG_RGB_FMT);
   int header_length = strlen(ANSI_BUFFER1 ANSI_CURSOR(1, 1) ANSI_CURSOR_N);
 
+  int new_width = canvas->width;
+  int new_height = canvas->height;
   char *pixel_buffer =
       malloc((canvas->height * canvas->width * pixel_size) + header_length);
-  // Filling it zero as 'C' fucking uses NULL terminated string
-  // which causes heap-overflow in all functions like printf,snprintf...
-  char utf8[4] = "\0\0\0\0"; // just to be sure
+
+
+  char utf8[4] = "\0\0\0\0";
   int buffer_index = 0;
 
   if (SWAP) {
@@ -35,8 +41,10 @@ void canvas_draw(Canvas *canvas) {
   }
   buffer_index += header_length;
 
-  for (int i = 0; i < canvas->height - padding; i += 2) {
-    for (int j = 0; j < canvas->width; j++) {
+
+
+  for (int i = 0; i < new_height-1; i += 2) {
+    for (int j = 0; j < new_width; j++) {
       Color c1 = canvas->surface[(i + 1 * 0) * canvas->width + j];
       Color c2 = canvas->surface[(i + 1 * 1) * canvas->width + j];
       FBColor c = color_merge(c1, c2);
@@ -53,6 +61,8 @@ void canvas_draw(Canvas *canvas) {
   printf(ANSI_CURSOR(1, 1) ANSI_CURSOR_Y);
   free(pixel_buffer);
   SWAP ^= 1;
+
+
 }
 
 void canvas_place(Canvas *canvas, int x, int y, Color color) {

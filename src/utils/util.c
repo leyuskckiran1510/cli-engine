@@ -1,16 +1,12 @@
 #include "util.h"
 #include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-
 
 /*
-termios — MAN page
-    https://man7.org/linux/man-pages/man3/termios.3.html#DESCRIPTION
-    or 
-    man 3 termios
+  I followed Bunch onf msdn docs and patched toghter this
+  also it doenot support our current character,
+  very buggy
+  TODO: fix this
 */
-
 #if defined _WIN32 || defined _WIN64
    HANDLE hStdout, hStdin;
    DWORD inMode, inOldMode;//cRead, 
@@ -54,6 +50,13 @@ termios — MAN page
 }
 
 #else
+/*
+termios — MAN page
+    https://man7.org/linux/man-pages/man3/termios.3.html#DESCRIPTION
+    or 
+    man 3 termios
+*/
+
   struct termios orig_termios;
   void reset_terminal_mode() { tcsetattr(0, TCSANOW, &orig_termios); }//resetting
   void set_conio_terminal_mode() {
@@ -174,6 +177,8 @@ void unsigned_to_unicode(unsigned int x, char *buffer) {
   }
 }
 
+/*
+Best way to do but might not be portabel to other system
 vec2i get_terminal_size(){
   struct winsize w;
   vec2i temp;
@@ -181,5 +186,17 @@ vec2i get_terminal_size(){
   temp.x = w.ws_col;
   temp.y = w.ws_row;
   return temp;
+}
+
+*/
+
+
+vec2i get_terminal_size(){
+  vec2i v;
+  printf(ANSI_CURSOR(99999999,999999) ANSI_CURSOR_PING); 
+  fflush(stdout); 
+  scanf("\x1b[%d;%dR", &v.x,&v.y);
+  fflush(stdout);
+  return v;
 }
 

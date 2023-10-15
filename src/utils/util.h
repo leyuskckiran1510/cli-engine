@@ -1,6 +1,11 @@
 #ifndef __CE_UTIL__
 #define __CE_UTIL__
 
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include "./../ansi_codes.h"
+
 #ifdef __APPLE__
 	#include <unistd.h>
 	#include <termios.h>

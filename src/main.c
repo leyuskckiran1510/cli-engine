@@ -71,7 +71,7 @@ void free_all(Canvas *c) {
   c = NULL;
 }
 
-#define FPS 60
+#define FPS 120
 
 int main() {
   clear_screen();
@@ -114,6 +114,8 @@ int main() {
             (balls[i].y + balls[i].r >= balls[j].y - balls[j].r &&
              balls[i].y + balls[i].r <= balls[j].y + balls[j].r)) {
           velocs[i].x *= -1;
+          // balls[i].x += velocs[i].x*balls[j].r; 
+          // balls[i].y += velocs[i].y*balls[j].r; 
           velocs[j].x *= -1;
           velocs[i].y *= -1;
           velocs[j].y *= -1;
@@ -128,9 +130,9 @@ int main() {
         velocs[i].y *= -0.7;
       }
       balls[i].x += velocs[i].x;
-      balls[i].y += velocs[i].y * (1.0f / 30);
+      balls[i].y += velocs[i].y * (1.0f / FPS);
 
-      velocs[i].y += (gravity * (1.0f / 30));
+      velocs[i].y += (gravity * (1.0f / FPS));
       bouncingball(c, balls[i]);
     }
 #else
@@ -138,7 +140,8 @@ int main() {
 #endif
     c->draw(c);
     c->fill(c, BLACK);
-    usleep(1000 * 1000 / FPS);
+    // usleep(1000 * 1000 / FPS);
   }
+  reset_all();
   return 0;
 }

@@ -1,4 +1,8 @@
 #if defined _WIN32 || defined _WIN64
+  /*
+    Very buggy and might not work properly , but work ;)
+    TODO: fix this
+  */
   #ifndef WIN32_LEAN_AND_MEAN
   #define WIN32_LEAN_AND_MEAN
   #endif
