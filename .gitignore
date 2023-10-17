@@ -1,6 +1,9 @@
 #binary file
 cli-engine
 
+#profiler datas 
+profile*
+
 # Prerequisites
 *.d
 

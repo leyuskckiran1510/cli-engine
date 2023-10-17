@@ -8,7 +8,7 @@
 #define ANSI_SET_TITLE_FMT ESC "]0;%s\a"
 
 //Clear Screen
-#define ANSI_CLR           ESC "[0J" ESC "[1J" ESC "[2J" ESC "[3J"
+#define ANSI_CLR           ESC "[0J" ESC "[1J" ESC "[2J" //ESC "[3J"
 #define ANSI_CLR_TOP       ESC "[0J"
 #define ANSI_CLR_BOTTOM    ESC "[1J"
 #define ANSI_CLR_SCREEN    ESC "[2J"

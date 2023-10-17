@@ -189,13 +189,11 @@ vec2i get_terminal_size(){
 }
 
 */
-
-
 vec2i get_terminal_size(){
   vec2i v;
   printf(ANSI_CURSOR(99999999,999999) ANSI_CURSOR_PING); 
   fflush(stdout); 
-  scanf("\x1b[%d;%dR", &v.x,&v.y);
+  (void)scanf("\x1b[%d;%dR", &v.y,&v.x);
   fflush(stdout);
   return v;
 }

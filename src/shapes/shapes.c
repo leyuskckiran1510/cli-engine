@@ -1,4 +1,3 @@
-
 #include "shapes.h"
 
 #define square(x) ((x)*(x))
@@ -35,69 +34,6 @@ void rectangle(Canvas *c, int x, int y, int width, int height, Color color,
   }
   
 }
-// void line(Canvas *c,int sx, int sy, int ex, int ey, Color color) {
-//     int dx = ex - sx;
-//     int dy = ey - sy;
-//     int dx1 = dx;
-//     int dy1 = dy;
-
-//     if (dx < 0){
-//         dx1 = -dx;
-//         int_swap(&ex,&sx);
-//     }
-//     if (dy < 0){
-//         dy1 = -dy;
-//         int_swap(&ey,&sy);
-//     }
-
-//     if (dx1 >= dy1) {
-//         // if (dx < 0) {
-//         // }
-//         int x = sx;
-//         int y = sy;
-//         int d = 2 * dy1 - dx1;
-//         int incrE = 2 * dy1;
-//         int incrNE = 2 * (dy1 - dx1);
-
-//         while (x < ex) {
-//             if (d <= 0)
-//                 d += incrE;
-//             else {
-//                 d += incrNE;
-//                 if (dy < 0)
-//                     y--;
-//                 else
-//                     y++;
-//             }
-//             x++;
-//             canvas_place(c,x,y,color);
-//         }
-//     } else {
-//         // if (dy < 0) {
-//         //     int_swap(&ex,&sx);
-//         //     int_swap(&ey,&sy);
-//         // }
-//         int x = sx;
-//         int y = sy;
-//         int d = 2 * dx1 - dy1;
-//         int incrN = 2 * dx1;
-//         int incrNE = 2 * (dx1 - dy1);
-
-//         while (y < ey) {
-//             if (d <= 0)
-//                 d += incrN;
-//             else {
-//                 d += incrNE;
-//                 if (dx < 0)
-//                     x--;
-//                 else
-//                     x++;
-//             }
-//             y++;
-//             canvas_place(c,x,y,color);
-//         }
-//     }
-// }
 
 void line(Canvas *c,int x,int y,int x2, int y2, Color color) {
     int w = x2 - x ;

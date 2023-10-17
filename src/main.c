@@ -75,7 +75,7 @@ void free_all(Canvas *c) {
 
 int main() {
   clear_screen();
-  Canvas *c = InitWindow(127, 80, "HELLO TTY");
+  Canvas *c = InitWindow(200,100, "HELLO TTY");
   vec_circle balls[5] = {
       {.x = 100.f, .y = 1, .r = 10}, {.x = 30, .y = 0, .r = 5},
       {.x = 40, .y = 13, .r = 6},    {.x = 50, .y = 56, .r = 7},
@@ -86,13 +86,15 @@ int main() {
   };
   float gravity = 300;
   char key;
+  int counter=0;
+  int pause=0;
   while (1) {
     key = keypress();
     switch (key) {
     case KEY_q:
     case KEY_Q: {
       free_all(c);
-      copy_to_clipboard("Thank you for using cli-engine "); // easter egg
+      copy_to_clipboard(" Thank you for using cli-engine "); // easter egg
       return 0;
     }
     case KEY_a:
@@ -101,9 +103,14 @@ int main() {
       usleep(5000);
       break;
     }
+    case KEY_SPACE:{
+      pause^=1;
+      break;
+    }
     default:
       break;
     }
+    if(pause)continue;
 #ifdef __ANIMATION__
     for (size_t i = 0; i < sizeof(balls) / sizeof(vec_circle); i++) {
       for (size_t j = i; j < sizeof(balls) / sizeof(vec_circle); j++) {
@@ -139,9 +146,11 @@ int main() {
     shapes_test(c);
 #endif
     c->draw(c);
-    c->fill(c, BLACK);
+    c->clear(c);
+    // c->fill(c, BLACK);
     // usleep(1000 * 1000 / FPS);
   }
+  free_all(c);
   reset_all();
   return 0;
 }

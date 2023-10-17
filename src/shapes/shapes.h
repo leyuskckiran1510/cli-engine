@@ -13,7 +13,6 @@ typedef enum {
 
 void rectangle(Canvas *c, int x, int y, int width, int height, Color color,
                SHAPE_TYPE type);
-
 void line(Canvas *c, int sx, int sy, int ex, int ey, Color color);
 void circle_variance(Canvas *c, int x, int y, int xorg, int yorg, Color color);
 void circle_outline(Canvas *c, int cx, int cy, int r, Color color);

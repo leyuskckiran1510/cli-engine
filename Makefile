@@ -2,6 +2,7 @@
 # Compiler
 CC = gcc
 OPTIMIZE = -O0
+PROFILER = -pg
 
 # Compiler flags
 ifeq ($(OS),Windows_NT)
@@ -34,16 +35,16 @@ endif
 
 OBJ_FILES = $(SRC_FILES:.c=.o)
 # DEFINES = -D_DEBUG
-DEFINES = -D__ANIMATION__
+DEFINES = -D__ANIMATION__  #-D_DEBUG 
 
 all: $(EXECUTABLE)
 
 # Rule to compile C source files into object files
 %.o: %.c
-		$(CC) $(CFLAGS) -c $< -o $@ $(LIBS) $(DEFINES)
+		$(CC) $(CFLAGS) -c $< -o $@ $(LIBS) $(DEFINES) $(PROFILER)
 
 $(EXECUTABLE): $(OBJ_FILES)
-		$(CC) $(CFLAGS)  $^ -o $@ $(LIBS) 
+		$(CC) $(CFLAGS)  $^ -o $@ $(LIBS)  $(PROFILER)
 
 debug: compile
 	gdb ./$(EXECUTABLE)
