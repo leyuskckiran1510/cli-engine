@@ -1,6 +1,9 @@
 #binary file
 cli-engine
 
+#debug_codes
+*.dbg
+
 #profiler datas 
 profile*
 

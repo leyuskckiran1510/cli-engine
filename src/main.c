@@ -75,7 +75,7 @@ void free_all(Canvas *c) {
 
 int main() {
   clear_screen();
-  Canvas *c = InitWindow(200,100, "HELLO TTY");
+  Canvas *c = InitWindow(150,100, "HELLO TTY");
   vec_circle balls[5] = {
       {.x = 100.f, .y = 1, .r = 10}, {.x = 30, .y = 0, .r = 5},
       {.x = 40, .y = 13, .r = 6},    {.x = 50, .y = 56, .r = 7},
@@ -86,6 +86,7 @@ int main() {
   };
   float gravity = 300;
   char key;
+  float damping=1;
   int counter=0;
   int pause=0;
   while (1) {
@@ -100,7 +101,7 @@ int main() {
     case KEY_a:
     case KEY_A: {
       printf("Pressed A/a");
-      usleep(5000);
+  
       break;
     }
     case KEY_SPACE:{
@@ -123,18 +124,19 @@ int main() {
           velocs[i].x *= -1;
           // balls[i].x += velocs[i].x*balls[j].r; 
           // balls[i].y += velocs[i].y*balls[j].r; 
+        
           velocs[j].x *= -1;
           velocs[i].y *= -1;
           velocs[j].y *= -1;
         }
       }
       if (balls[i].x - balls[i].r <= 0 || balls[i].x >= c->width - balls[i].r) {
-        velocs[i].x *= -0.9;
+        velocs[i].x *= -damping;
       }
 
       if (balls[i].y >= c->height - balls[i].r) {
         balls[i].y = c->height - balls[i].r;
-        velocs[i].y *= -0.7;
+        velocs[i].y *= -damping;
       }
       balls[i].x += velocs[i].x;
       balls[i].y += velocs[i].y * (1.0f / FPS);
@@ -148,7 +150,7 @@ int main() {
     c->draw(c);
     c->clear(c);
     // c->fill(c, BLACK);
-    // usleep(1000 * 1000 / FPS);
+    usleep(1000 * 1000 / FPS);
   }
   free_all(c);
   reset_all();
