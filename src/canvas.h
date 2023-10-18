@@ -1,9 +1,13 @@
 #ifndef __CANVAS__
 #define __CANVAS__
 
-#include "colors.h"
 
 typedef struct Canvas Canvas;
+
+#ifndef __COLORS__
+  #include "colors.h"
+#endif
+
 
 typedef struct Canvas {
   int width;

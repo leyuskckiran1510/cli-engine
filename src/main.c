@@ -71,7 +71,7 @@ void free_all(Canvas *c) {
   c = NULL;
 }
 
-#define FPS 120
+#define FPS 60
 
 int main() {
   clear_screen();

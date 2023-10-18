@@ -7,7 +7,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "colors.h"
 #include "canvas.h"
 #include "characters.h"
 #include "utils/util.h"
