@@ -10,7 +10,29 @@
 
 int SWAP = 0;
 
-#define min(x, y) x < y ? x : y
+Color map_coords(Canvas*canvas, int x,int y,int v_width,int v_height,float scale_x,float scale_y){
+  Color colr={0};
+  float v_x = scale_x*x;
+  float v_y = scale_y*y;
+  int f_v_x = floor(v_x);
+  int f_v_y = floor(v_y);
+  float frac_x = v_x - f_v_x;
+  float frac_y = v_y - f_v_y;
+  colr.r = (1-frac_x)*(1-frac_y)*canvas_get(canvas,f_v_x,f_v_y).r+
+           frac_x*(1-frac_y)*canvas_get(canvas,f_v_x+1,f_v_y).r+
+           (1-frac_x)*(frac_y)*canvas_get(canvas,f_v_x,f_v_y+1).r+
+           frac_x*(frac_y)*canvas_get(canvas,f_v_x+1,f_v_y+1).r;
+  colr.g = (1-frac_x)*(1-frac_y)*canvas_get(canvas,f_v_x,f_v_y).g+
+           frac_x*(1-frac_y)*canvas_get(canvas,f_v_x+1,f_v_y).g+
+           (1-frac_x)*(frac_y)*canvas_get(canvas,f_v_x,f_v_y+1).g+
+           frac_x*(frac_y)*canvas_get(canvas,f_v_x+1,f_v_y+1).g;
+  colr.b = (1-frac_x)*(1-frac_y)*canvas_get(canvas,f_v_x,f_v_y).b+
+           frac_x*(1-frac_y)*canvas_get(canvas,f_v_x+1,f_v_y).b+
+           (1-frac_x)*(frac_y)*canvas_get(canvas,f_v_x,f_v_y+1).b+
+           frac_x*(frac_y)*canvas_get(canvas,f_v_x+1,f_v_y+1).b;
+  return colr;
+
+}
 
 void canvas_draw(Canvas *canvas) {
   vec2i window = get_terminal_size();
@@ -18,6 +40,7 @@ void canvas_draw(Canvas *canvas) {
   float h_m_c = 2.0; // height_merge_count
   float scaleX = (float)window.x / (float)canvas->width;
   float scaleY = ((float)window.y * h_m_c) / ((float)(canvas->height));
+
   if (scaleX > scaleY) {
     new_width = canvas->width * (scaleY);
     new_height = window.y * h_m_c;
@@ -25,6 +48,8 @@ void canvas_draw(Canvas *canvas) {
     new_width = window.x;
     new_height = canvas->height * (scaleX);
   }
+
+
   int top_padding = (window.y * h_m_c > new_height)
                         ? (window.y * h_m_c - new_height) / (h_m_c * 2)
                         : 0;
@@ -45,13 +70,15 @@ void canvas_draw(Canvas *canvas) {
   buffer_index += header_length;
 
   // char utf8[4] ="\0\0\0\0";
+
   char utf8[4] = "▄";
+
   /*-----Top Padding-----*/
   for (int _ = 0; _ < top_padding; _++) {
     pixel_buffer[buffer_index++] = '\n';
   }
 
-  for (int row = 0; row < new_height; row += h_m_c) {
+  for (int row = 0; row < new_height-h_m_c; row += h_m_c) {
 
     /*---- Left Padding-----*/
     for (int _ = 0; _ < left_padding; _++) {
@@ -59,61 +86,22 @@ void canvas_draw(Canvas *canvas) {
     }
 
     for (int col = 0; col < new_width; col++) {
-      float x_l = floor(scaleX * col);
-      float x_h = ceil(scaleX * col);
-      float y1_l = floor(scaleY * row);
-      float y1_h = ceil(scaleY * row);
 
-      float y2_l = floor(scaleY * (row+1));
-      float y2_h = ceil(scaleY * (row+1));
+      float originalX = col / scaleX;
+      float originalY = row / (scaleY);
 
-      float x_weight = (scaleX * col) - x_l;
-      float y1_weight = (scaleY * col) - y1_l;
-      float y2_weight = (scaleY * col) - y2_l;
-
-
-      Color c1_arr_temp[4] = {
-          canvas_get(canvas, x_l, y1_l),
-          canvas_get(canvas, x_h, y1_l),
-          canvas_get(canvas, x_l, y1_h),
-          canvas_get(canvas, x_h, y1_h),
-      };
-      Color c1_arr[4] = {color_mul(c1_arr_temp[0], (1 - x_weight) * (1 - y1_weight)),
-                         color_mul(c1_arr_temp[1], (x_weight) * (1 - y1_weight)),
-                         color_mul(c1_arr_temp[2], (1 - x_weight) * (y1_weight)),
-                         color_mul(c1_arr_temp[3], (x_weight) * (y1_weight))};
-      Color c1 = color_add(c1_arr[0],c1_arr[1]);
-      c1 = color_add(c1,c1_arr[2]);
-      c1 = color_add(c1,c1_arr[3]);
-
-       Color c2_arr_temp[4] = {
-          canvas_get(canvas, x_l, y2_l),
-          canvas_get(canvas, x_h, y2_l),
-          canvas_get(canvas, x_l, y2_h),
-          canvas_get(canvas, x_h, y2_h),
-      };
-      Color c2_arr[4] = {color_mul(c2_arr_temp[0], (1 - x_weight) * (1 - y2_weight)),
-                         color_mul(c2_arr_temp[1], (x_weight) * (1 - y2_weight)),
-                         color_mul(c2_arr_temp[2], (1 - x_weight) * (y2_weight)),
-                         color_mul(c2_arr_temp[3], (x_weight) * (y2_weight))};
-      Color c2 = color_add(c2_arr[0],c2_arr[1]);
-      c2 = color_add(c2,c2_arr[2]);
-      c2 = color_add(c2,c2_arr[3]);
-
-      // Color c2 = c1;
-      FBColor c = color_merge(c1, c2);
-
-      // FBColor c =
-      // color_merge_bilinear(canvas,j,i,canvas->width/(float)new_width);
+      Color c1 =  map_coords(canvas,originalX,originalY,new_width,new_height,scaleX,scaleY);
+      Color c2 =  map_coords(canvas,originalX,originalY+1,new_width,new_height,scaleX,scaleY);
+      
+      FBColor c = color_merge(c1,c2);
       buffer_index +=
           snprintf(&pixel_buffer[buffer_index], pixel_size,
                    ANSI_FGBG_RGB_FMT "%s", COLOR(c.fg), COLOR(c.bg), utf8);
     }
+    pixel_buffer[buffer_index++] = '\n';
     strcpy(&pixel_buffer[buffer_index], RESET_COLOR);
     buffer_index += 4;
-    pixel_buffer[buffer_index++] = '\n';
   }
-
   printf("%s", pixel_buffer);
   printf(ANSI_CURSOR(1, 1) ANSI_CURSOR_Y);
   free(pixel_buffer);

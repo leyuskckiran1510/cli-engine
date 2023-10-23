@@ -9,6 +9,8 @@ FBColor color_merge(Color c1, Color c2){
 
 Color color_mul(Color c,float value){
   int max = 255;
+  if(value<0)
+    return (Color){0};
   c.r =(c.r *value)<max?(c.r *value):max;
   c.g =(c.g *value)<max?(c.g *value):max;
   c.b =(c.b *value)<max?(c.b *value):max;
@@ -25,10 +27,9 @@ Color color_add(Color c1,Color c2){
 }
 
 
-FBColor color_merge_bilinear(Canvas* canvas,int x,int y,float amount){
-  (void)amount;
-  Color c1 = canvas_get(canvas, x, y);
-  Color c2 = canvas_get(canvas, x, y + 1);
-  FBColor c = color_merge(c1, c2);
-  return c;
+Color color_merge_bilinear(Color c1,Color c2,float amount){
+  c1.r = (1 - amount) * c1.r + amount * c2.r;
+  c1.g = (1 - amount) * c1.g + amount * c2.g;
+  c1.b = (1 - amount) * c1.b + amount * c2.b;
+  return c1;
 }

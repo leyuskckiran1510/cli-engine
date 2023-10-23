@@ -34,8 +34,16 @@ endif
 
 
 OBJ_FILES = $(SRC_FILES:.c=.o)
-# DEFINES = -D_DEBUG
-DEFINES = -D__ANIMATION__  #-D_DEBUG 
+
+D = n
+ifeq ($(D),a)
+		DEFINES = -D__ANIMATION__  
+else ifeq ($(D),d)
+		DEFINES = -D_DEBUG
+else
+		DEFINES = 
+endif
+
 
 all: $(EXECUTABLE)
 

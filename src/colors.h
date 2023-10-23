@@ -29,9 +29,9 @@ typedef struct {
 
 
 FBColor color_merge(Color c1, Color c2);
-FBColor color_merge_bilinear(Canvas*,int,int,float);
 Color color_mul(Color c,float value);
 Color color_add(Color c1,Color c2);
+Color color_merge_bilinear(Color c1,Color c2,float amount);
 
 static const Color RED = {.r = 255, .g = 100, .b = 100};
 static const Color GREEN ={ .r = 100,.g = 255, .b = 100};
