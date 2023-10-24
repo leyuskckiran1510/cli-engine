@@ -14,8 +14,6 @@ make
 
 # DEMO
 
-<video width="320" height="240" controls>
-  <source src="./images/demo.mp4" type="video/mp4">
-</video>
+https://github.com/leyuskckiran1510/cli-engine/blob/main/images/demo.mp4
 
-https://github.com/leyuskckiran1510/cli-engine/blob/main/
+Press Play
