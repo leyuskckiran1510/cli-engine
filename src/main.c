@@ -75,7 +75,7 @@ void free_all(Canvas *c) {
 
 int main() {
   clear_screen();
-  Canvas *c = InitWindow(150,100, "HELLO TTY");
+  Canvas *c = InitWindow(200,100, "HELLO TTY");
   vec_circle balls[5] = {
       {.x = 100.f, .y = 1, .r = 10}, {.x = 30, .y = 0, .r = 5},
       {.x = 40, .y = 13, .r = 6},    {.x = 50, .y = 56, .r = 7},

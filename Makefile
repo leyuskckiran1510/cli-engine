@@ -12,7 +12,7 @@ ifeq ($(OS),Windows_NT)
 else
 	CFLAGS = -ggdb -Wall -Wextra $(OPTIMIZE) -pedantic -fsanitize=address
 	EXECUTABLE = cli-engine
-	LIBS = -lm
+	LIBS = -lm 
 endif
 
 #Test File

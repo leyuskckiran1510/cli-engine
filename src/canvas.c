@@ -10,28 +10,28 @@
 
 int SWAP = 0;
 
-Color map_coords(Canvas*canvas, int x,int y,int v_width,int v_height,float scale_x,float scale_y){
-  Color colr={0};
-  float v_x = scale_x*x;
-  float v_y = scale_y*y;
+Color map_coords(Canvas *canvas, int x, int y,
+                 float scale) {
+  Color colr = {0};
+  float v_x = x / scale;
+  float v_y = y / scale;
   int f_v_x = floor(v_x);
   int f_v_y = floor(v_y);
   float frac_x = v_x - f_v_x;
   float frac_y = v_y - f_v_y;
-  colr.r = (1-frac_x)*(1-frac_y)*canvas_get(canvas,f_v_x,f_v_y).r+
-           frac_x*(1-frac_y)*canvas_get(canvas,f_v_x+1,f_v_y).r+
-           (1-frac_x)*(frac_y)*canvas_get(canvas,f_v_x,f_v_y+1).r+
-           frac_x*(frac_y)*canvas_get(canvas,f_v_x+1,f_v_y+1).r;
-  colr.g = (1-frac_x)*(1-frac_y)*canvas_get(canvas,f_v_x,f_v_y).g+
-           frac_x*(1-frac_y)*canvas_get(canvas,f_v_x+1,f_v_y).g+
-           (1-frac_x)*(frac_y)*canvas_get(canvas,f_v_x,f_v_y+1).g+
-           frac_x*(frac_y)*canvas_get(canvas,f_v_x+1,f_v_y+1).g;
-  colr.b = (1-frac_x)*(1-frac_y)*canvas_get(canvas,f_v_x,f_v_y).b+
-           frac_x*(1-frac_y)*canvas_get(canvas,f_v_x+1,f_v_y).b+
-           (1-frac_x)*(frac_y)*canvas_get(canvas,f_v_x,f_v_y+1).b+
-           frac_x*(frac_y)*canvas_get(canvas,f_v_x+1,f_v_y+1).b;
+  colr.r = (1 - frac_x) * (1 - frac_y) * canvas_get(canvas, f_v_x, f_v_y).r +
+           frac_x * (1 - frac_y) * canvas_get(canvas, f_v_x + 1, f_v_y).r +
+           (1 - frac_x) * (frac_y)*canvas_get(canvas, f_v_x, f_v_y + 1).r +
+           frac_x * (frac_y)*canvas_get(canvas, f_v_x + 1, f_v_y + 1).r;
+  colr.g = (1 - frac_x) * (1 - frac_y) * canvas_get(canvas, f_v_x, f_v_y).g +
+           frac_x * (1 - frac_y) * canvas_get(canvas, f_v_x + 1, f_v_y).g +
+           (1 - frac_x) * (frac_y)*canvas_get(canvas, f_v_x, f_v_y + 1).g +
+           frac_x * (frac_y)*canvas_get(canvas, f_v_x + 1, f_v_y + 1).g;
+  colr.b = (1 - frac_x) * (1 - frac_y) * canvas_get(canvas, f_v_x, f_v_y).b +
+           frac_x * (1 - frac_y) * canvas_get(canvas, f_v_x + 1, f_v_y).b +
+           (1 - frac_x) * (frac_y)*canvas_get(canvas, f_v_x, f_v_y + 1).b +
+           frac_x * (frac_y)*canvas_get(canvas, f_v_x + 1, f_v_y + 1).b;
   return colr;
-
 }
 
 void canvas_draw(Canvas *canvas) {
@@ -44,20 +44,28 @@ void canvas_draw(Canvas *canvas) {
   if (scaleX > scaleY) {
     new_width = canvas->width * (scaleY);
     new_height = window.y * h_m_c;
+    scaleX = scaleY;
   } else {
     new_width = window.x;
-    new_height = canvas->height * (scaleX);
+    new_height = canvas->height * scaleX;
+    scaleY =scaleX;
   }
-
 
   int top_padding = (window.y * h_m_c > new_height)
                         ? (window.y * h_m_c - new_height) / (h_m_c * 2)
                         : 0;
   int left_padding = (window.x > new_width) ? (window.x - new_width) / 2 : 0;
 
-  int pixel_size = strlen(ANSI_FGBG_RGB_FMT);
+
+
+  // char utf8[4] ="\0\0\0\0";
+
+  char utf8[4] = "▄";
+  int pixel_size = strlen(ANSI_FGBG_RGB_FMT) + strlen(ANSI_RESET);
   char *HEADER[] = {ANSI_BUFFER1 ANSI_CURSOR(1, 1) ANSI_CURSOR_N ANSI_CLR "\0",
                     ANSI_BUFFER2 ANSI_CURSOR(1, 1) ANSI_CURSOR_N ANSI_CLR "\0"};
+
+
   int header_length = strlen(HEADER[0]);
   char *pixel_buffer =
       malloc(((new_height / h_m_c) * new_width * pixel_size) + header_length);
@@ -69,39 +77,29 @@ void canvas_draw(Canvas *canvas) {
   }
   buffer_index += header_length;
 
-  // char utf8[4] ="\0\0\0\0";
-
-  char utf8[4] = "▄";
-
   /*-----Top Padding-----*/
   for (int _ = 0; _ < top_padding; _++) {
     pixel_buffer[buffer_index++] = '\n';
   }
 
-  for (int row = 0; row < new_height-h_m_c; row += h_m_c) {
+  for (int row = 0; row < new_height; row += h_m_c) {
 
     /*---- Left Padding-----*/
     for (int _ = 0; _ < left_padding; _++) {
       pixel_buffer[buffer_index++] = ' ';
     }
-
     for (int col = 0; col < new_width; col++) {
-
-      float originalX = col / scaleX;
-      float originalY = row / (scaleY);
-
-      Color c1 =  map_coords(canvas,originalX,originalY,new_width,new_height,scaleX,scaleY);
-      Color c2 =  map_coords(canvas,originalX,originalY+1,new_width,new_height,scaleX,scaleY);
-      
-      FBColor c = color_merge(c1,c2);
-      buffer_index +=
-          snprintf(&pixel_buffer[buffer_index], pixel_size,
-                   ANSI_FGBG_RGB_FMT "%s", COLOR(c.fg), COLOR(c.bg), utf8);
+      Color c1 =
+          map_coords(canvas, col, row,scaleX);
+      Color c2 = map_coords(canvas, col, row +1,scaleX);
+      FBColor c = color_merge(c1, c2);
+      buffer_index += snprintf(&pixel_buffer[buffer_index], pixel_size,
+                               ANSI_FGBG_RGB_FMT "%s\x1b[m", COLOR(c.fg),
+                               COLOR(c.bg), utf8);
     }
     pixel_buffer[buffer_index++] = '\n';
-    strcpy(&pixel_buffer[buffer_index], RESET_COLOR);
-    buffer_index += 4;
   }
+  // pixel_buffer[buffer_index-1]=0;
   printf("%s", pixel_buffer);
   printf(ANSI_CURSOR(1, 1) ANSI_CURSOR_Y);
   free(pixel_buffer);
