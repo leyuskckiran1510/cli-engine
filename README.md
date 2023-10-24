@@ -13,5 +13,4 @@ make
 
 
 # DEMO
-
-![Demo](./images/demo.mp4)
+https://github.com/leyuskckiran1510/cli-engine/blob/main/images/demo.mp4
