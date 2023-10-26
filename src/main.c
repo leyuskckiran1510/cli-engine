@@ -71,7 +71,7 @@ void free_all(Canvas *c) {
   c = NULL;
 }
 
-#define FPS 130
+#define FPS 30
 
 int main() {
   clear_screen();
@@ -86,7 +86,7 @@ int main() {
   };
   float gravity = 300;
   char key;
-  float damping=1;
+  float damping=0.9;
   int counter=0;
   int pause=0;
   while (1) {
@@ -114,22 +114,22 @@ int main() {
     if(pause)continue;
 #ifdef __ANIMATION__
     for (size_t i = 0; i < sizeof(balls) / sizeof(vec_circle); i++) {
-      for (size_t j = i; j < sizeof(balls) / sizeof(vec_circle); j++) {
-        if (i == j)
-          continue;
-        if ((balls[i].x + balls[i].r >= balls[j].x - balls[j].r &&
-             balls[i].x + balls[i].r <= balls[j].x + balls[j].r) &&
-            (balls[i].y + balls[i].r >= balls[j].y - balls[j].r &&
-             balls[i].y + balls[i].r <= balls[j].y + balls[j].r)) {
-          velocs[i].x *= -1;
-          // balls[i].x += velocs[i].x*balls[j].r; 
-          // balls[i].y += velocs[i].y*balls[j].r; 
+      // for (size_t j = i; j < sizeof(balls) / sizeof(vec_circle); j++) {
+      //   if (i == j)
+      //     continue;
+      //   if ((balls[i].x + balls[i].r >= balls[j].x - balls[j].r &&
+      //        balls[i].x + balls[i].r <= balls[j].x + balls[j].r) &&
+      //       (balls[i].y + balls[i].r >= balls[j].y - balls[j].r &&
+      //        balls[i].y + balls[i].r <= balls[j].y + balls[j].r)) {
+      //     velocs[i].x *= -1;
+      //     // balls[i].x += velocs[i].x*balls[j].r; 
+      //     // balls[i].y += velocs[i].y*balls[j].r; 
         
-          velocs[j].x *= -1;
-          velocs[i].y *= -1;
-          velocs[j].y *= -1;
-        }
-      }
+      //     velocs[j].x *= -1;
+      //     velocs[i].y *= -1;
+      //     velocs[j].y *= -1;
+      //   }
+      // }
       if (balls[i].x - balls[i].r <= 0 || balls[i].x >= c->width - balls[i].r) {
         velocs[i].x *= -damping;
       }

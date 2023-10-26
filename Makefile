@@ -69,6 +69,9 @@ endif
 run: $(EXECUTABLE)
 	./$(EXECUTABLE)
 
+example:
+
+
 test:
 ifneq ("$(wildcard $(TEST_FILE))","")
 	$(CC) $(TEST_FILE) -o $(TEST_FILE_OUT)

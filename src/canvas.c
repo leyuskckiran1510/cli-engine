@@ -1,3 +1,4 @@
+#include <errno.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -61,20 +62,23 @@ void canvas_draw(Canvas *canvas) {
   // char utf8[4] ="\0\0\0\0";
 
   char utf8[4] = "▄";
-  int pixel_size = strlen(ANSI_FGBG_RGB_FMT) + strlen(ANSI_RESET);
+  int pixel_padding = 5;
+  int pixel_size = strlen(ANSI_FGBG_RGB_FMT) + strlen(ANSI_RESET)+pixel_padding;
   char *HEADER[] = {ANSI_BUFFER1 ANSI_CURSOR(1, 1) ANSI_CURSOR_N ANSI_CLR "\0",
                     ANSI_BUFFER2 ANSI_CURSOR(1, 1) ANSI_CURSOR_N ANSI_CLR "\0"};
 
 
-  int header_length = strlen(HEADER[0]);
+  int header_length = strlen(HEADER[SWAP]);
   char *pixel_buffer =
-      malloc(((new_height / h_m_c) * new_width * pixel_size) + header_length);
-  int buffer_index = 0;
-  if (SWAP) {
-    strcpy(pixel_buffer, HEADER[0]);
-  } else {
-    strcpy(pixel_buffer, HEADER[1]);
+      malloc(((new_height / (int)h_m_c) * new_width * pixel_size) + header_length);
+  if(pixel_buffer==NULL){
+    printf("BY MORE RAM OR SMTHING MALLOC RETURNED NULL");
+    printf("%s",strerror(errno));
+    printf("ASKED TO ALLOCATE %d",((new_height /(int) h_m_c) * new_width * pixel_size) + header_length);
+    return;
   }
+  int buffer_index = 0;
+  strncpy(pixel_buffer,HEADER[SWAP],header_length);
   buffer_index += header_length;
 
   /*-----Top Padding-----*/
@@ -82,7 +86,7 @@ void canvas_draw(Canvas *canvas) {
     pixel_buffer[buffer_index++] = '\n';
   }
 
-  for (int row = 0; row < new_height; row += h_m_c) {
+  for (int row = 0; row < new_height-(new_height%2); row += h_m_c) {
 
     /*---- Left Padding-----*/
     for (int _ = 0; _ < left_padding; _++) {
@@ -99,8 +103,8 @@ void canvas_draw(Canvas *canvas) {
     }
     pixel_buffer[buffer_index++] = '\n';
   }
-  // pixel_buffer[buffer_index-1]=0;
-  printf("%s", pixel_buffer);
+
+  printf("%s\b", pixel_buffer);
   printf(ANSI_CURSOR(1, 1) ANSI_CURSOR_Y);
   free(pixel_buffer);
   SWAP ^= 1;
